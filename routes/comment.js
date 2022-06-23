@@ -9,24 +9,22 @@ const router = express.Router();
 
 // endpoint to make a comment on a post
 router.post('/comment', async (req, res) => {
-    const {token, comment, post_id, owner_name, owner_img} = req.body;
+    const {comment, post_id, owner_name, owner_img, comment_id, user_id} = req.body;
 
-    if(!token || !post_id || !comment || !owner_name){
+    if(!post_id || !comment || !owner_name || !user_id){
         return res.status(400).send({status: 'error', msg: 'All fields must be filled'});
     }
 
-    const timestamp = Date.now();
-
     try{
-        let user = jwt.verify(token, process.env.JWT_SECRET);
-
+        
         let mComment = new Comment;
         mComment.comment = comment;
+        mComment.comment_id = comment_id || '',
         mComment.post_id = post_id;
-        mComment.owner_id = user._id;
+        mComment.owner_id = user_id;
         mComment.owner_name = owner_name;
         mComment.owner_img = owner_img || '';
-        mComment.timestamp = timestamp;
+        mComment.timestamp = Date.now();
         
         mComment = await mComment.save();
 

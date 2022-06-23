@@ -6,16 +6,17 @@ const router = express.Router();
 
 // endpoint to like a post
 router.post('/like_post', async (req, res) => {
-    const {token, post_id} = req.body;
+    const {post_id, user_id} = req.body;
 
-    if(!token || !post_id){
+    if(!post_id || !user_id){
         return res.status(400).send({status: 'error', msg: 'All fields must be filled'});
     }
 
     try{
-        let user = jwt.verify(token, process.env.JWT_SECRET);
+        // let user = jwt.verify(token, process.env.JWT_SECRET);
 
-        const found = await Post.findOne({_id: post_id, likes: user._id});
+        // check to see if a user has liked a post before
+        const found = await Post.findOne({_id: post_id, likes: user_id});
 
         if(found)
             return res.status(400).send({status: 'error', msg: 'You already liked this post'});
@@ -23,7 +24,7 @@ router.post('/like_post', async (req, res) => {
         const post = await Post.findOneAndUpdate(
             {_id: post_id},
             {
-                "$push": {likes: user._id},
+                "$push": {likes: user_id},
                 "$inc": {like_count: 1}
             },
             {new: true}
@@ -41,16 +42,15 @@ router.post('/like_post', async (req, res) => {
 
 // endpoint to unlike a post
 router.post('/unlike_post', async (req, res) => {
-    const {token, post_id} = req.body;
+    const {post_id, user_id} = req.body;
 
-    if(!token || !post_id){
+    if(!user_id || !post_id){
         return res.status(400).send({status: 'error', msg: 'All fields must be filled'});
     }
 
     try{
-        let user = jwt.verify(token, process.env.JWT_SECRET);
-
-        const found = await Post.findOne({_id: post_id, likes: user._id});
+        
+        const found = await Post.findOne({_id: post_id, likes: user_id});
 
         if(!found)
             return res.status(400).send({status: 'error', msg: 'You haven\'t liked this post before'});
@@ -58,7 +58,7 @@ router.post('/unlike_post', async (req, res) => {
         const post = await Post.findOneAndUpdate(
             {_id: post_id},
             {
-                "$pull": {likes: user._id},
+                "$pull": {likes: user_id},
                 "$inc": {like_count: -1}
             },
             {new: true}
