@@ -27,6 +27,7 @@ app.use('/like', require('./routes/likes'));
 app.use('/test', require('./routes/test'));
 app.use('/comment', require('./routes/comment'));
 app.use('/profile', require('./routes/profile'));
+app.use('/search', require('./routes/search'));
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`Server started on PORT ${PORT}`))

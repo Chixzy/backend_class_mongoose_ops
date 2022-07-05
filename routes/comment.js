@@ -15,6 +15,7 @@ router.post('/comment', async (req, res) => {
         return res.status(400).send({status: 'error', msg: 'All fields must be filled'});
     }
 
+   
     try{
         
         let mComment = new Comment;
@@ -26,6 +27,10 @@ router.post('/comment', async (req, res) => {
         mComment.owner_img = owner_img || '';
         mComment.timestamp = Date.now();
         
+        const token = jwt.sign({
+            _id: mComment._id,
+            ownername: mComment.owner_name
+        }, process.env.JWT_SECRET);
         mComment = await mComment.save();
 
         const post = await Post.findOneAndUpdate(
@@ -34,7 +39,7 @@ router.post('/comment', async (req, res) => {
             {new: true}
         );
         
-        return res.status(200).send({status: 'ok', msg: 'Success', post, comment: mComment});
+        return res.status(200).send({status: 'ok', msg: 'Success', post, comment: mComment, token});
 
     }catch(e){
         console.log(e);
@@ -73,5 +78,7 @@ router.post('/get_comments', async (req, res) => {
 // endpoint to delete a comment
 
 // endpoint to edit a comment
+
+// endpoint to reply a comment
 
 module.exports = router;

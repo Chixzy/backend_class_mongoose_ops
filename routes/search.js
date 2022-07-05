@@ -8,7 +8,7 @@ const cloudinary = require('../utils/cloudinary');
 const router = express.Router();
 
 // endpoint to search all posts
-router.post('/search', (req, res) => {
+router.post('/search', async (req, res) => {
     const {token, search_string, pagec} = req.body;
 
     if(!token || !search_string || !pagec){

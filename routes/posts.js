@@ -17,30 +17,28 @@ router.post('/make_a_post', upload.array('post_files', 10), async (req, res) => 
     }
 
     try{
-        const timestamp = Date.now();
-
         let post = new Post;
 
         let img_urls = [];
         let img_ids = [];
 
-        // if(req.files){
-        //     if(req.files.length != 0){
-        //         for(let i = 0; i < req.files.length; i++){
-        //             let result = await cloudinary.uploader.upload(req.files[i].path, {folder: 'mongoose_ops'});
-        //             console.log(result);
-        //             img_urls.push(result.secure_url);
-        //             img_ids.push(result.public_id);
-        //         }
-        //     }
-        // }
+        if(req.files){
+            if(req.files.length != 0){
+                for(let i = 0; i < req.files.length; i++){
+                    let result = await cloudinary.uploader.upload(req.files[i].path, {folder: 'mongoose_ops'});
+                    console.log(result);
+                    img_urls.push(result.secure_url);
+                    img_ids.push(result.public_id);
+                }
+            }
+        }
             
 
         post.title = title;
         post.body = body;
         post.owner_name = owner_name;
-        post.owner_img = owner_img;
-        post.timestamp = timestamp;
+        // post.owner_img = owner_img;
+        post.timestamp = Date.now();
         post.owner_id = owner_id;
         post.likes = [];
         post.imgs = img_urls;
